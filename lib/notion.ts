@@ -14,7 +14,9 @@ export type NotionProduct = {
   description: string;
   details: string;
   colors?: string[];
-  /** Resolved, ready-to-use URLs from the "Photos" field, in upload order. */
+  /** Resolved, ready-to-use URLs from the "Photos" field, sorted by
+   *  filename (e.g. pr1-1.jpg, pr1-2.jpg, ...) so the naming system
+   *  controls order regardless of upload order. */
   images?: string[];
 };
 
@@ -38,6 +40,14 @@ type NotionPage = {
 
 function text(prop?: { rich_text?: NotionRichText; title?: NotionRichText }): string {
   return prop?.rich_text?.[0]?.plain_text ?? prop?.title?.[0]?.plain_text ?? "";
+}
+
+// Numeric-aware sort so "pr1-2.jpg" sorts before "pr1-10.jpg" (a plain
+// alphabetical sort would put "pr1-10" before "pr1-2"). This is what makes
+// the filename naming system (pr1-1, pr1-2, pr1-3...) reliably control
+// which photo shows first, regardless of the order they were uploaded in.
+function naturalCompare(a: string, b: string): number {
+  return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
 }
 
 export async function getNotionProducts(): Promise<NotionProduct[] | null> {
@@ -75,7 +85,8 @@ export async function getNotionProducts(): Promise<NotionProduct[] | null> {
       const p = page.properties;
       const badge = p["Badge"]?.select?.name;
       const priceNum = p["Price (LKR)"]?.number ?? 0;
-      const images = (p["Photos"]?.files ?? [])
+      const images = [...(p["Photos"]?.files ?? [])]
+        .sort((a, b) => naturalCompare(a.name ?? "", b.name ?? ""))
         .map((f) => f.file?.url ?? f.external?.url)
         .filter((url): url is string => Boolean(url));
 

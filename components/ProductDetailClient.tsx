@@ -50,7 +50,12 @@ export default function ProductDetailClient({
                   onClick={() => setActiveIndex(i)}
                   aria-label={`View photo ${i + 1}`}
                 >
-                  <SmartImage src={src} alt={`${product.name} ${i + 1}`} fallbackLabel={`${i + 1}`} />
+                  <SmartImage
+                    src={src}
+                    alt={`${product.name} ${i + 1}`}
+                    fallbackLabel={`${i + 1}`}
+                    adaptiveBg
+                  />
                 </button>
               ))}
             </div>
@@ -59,6 +64,7 @@ export default function ProductDetailClient({
                 src={photos[activeIndex]}
                 alt={product.name}
                 fallbackLabel={product.name}
+                adaptiveBg
               />
             </div>
           </div>

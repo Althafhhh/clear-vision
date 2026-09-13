@@ -17,10 +17,15 @@ export type Product = {
 };
 
 export async function getProducts(): Promise<Product[]> {
-  const notionProducts = await getNotionProducts();
-  if (notionProducts && notionProducts.length > 0) return notionProducts;
+  const notionProducts = (await getNotionProducts()) ?? [];
 
-  // Falls back to the seed data in content.ts — keeps the site fully
-  // functional even before Notion is connected, or if the API call fails.
-  return content.shop.sampleProducts;
+  // Merge: real Notion products first, then any sample product whose id
+  // isn't already covered by Notion. This means adding a real product in
+  // Notion never breaks a page that was already linked or cached for one
+  // of the built-in samples — it only gets replaced once a Notion product
+  // uses that exact same id, or once you remove it from content.ts yourself.
+  const notionIds = new Set(notionProducts.map((p) => p.id));
+  const remainingSamples = content.shop.sampleProducts.filter((p) => !notionIds.has(p.id));
+
+  return [...notionProducts, ...remainingSamples];
 }
