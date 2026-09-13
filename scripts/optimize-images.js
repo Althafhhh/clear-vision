@@ -13,10 +13,12 @@
  * Usage:
  *   1. Drop your original, full-size photos into raw-images/
  *      (use the exact filenames from the image naming guide, e.g.
- *      hero-new-arrivals.jpg, product-classic-aviator-main.jpg, etc.)
+ *      hero-new-arrivals.jpg, product-classic-aviator-main.jpg, etc.
+ *      .jpg, .png, .webp, and .avif are all accepted as input).
  *   2. Run: npm run optimize-images
- *   3. Optimized versions land in public/images/ with the SAME filenames
- *      and SAME extensions — no code changes needed, ever. SmartImage
+ *   3. Optimized versions land in public/images/ as .jpg (AVIF/WebP inputs
+ *      get converted to .jpg on the way out — everything else keeps its
+ *      original extension) — no code changes needed, ever. SmartImage
  *      just picks them up.
  *
  * What it does to each image:
@@ -57,13 +59,17 @@ function getMaxWidth(filename) {
 
 async function optimizeOne(filename) {
   const ext = path.extname(filename).toLowerCase();
-  if (![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) {
+  if (![".jpg", ".jpeg", ".png", ".webp", ".avif"].includes(ext)) {
     console.log(`  skip (not an image): ${filename}`);
     return;
   }
 
   const inputPath = path.join(SOURCE_DIR, filename);
-  const outputPath = path.join(OUTPUT_DIR, filename);
+  // AVIF in, JPG out — .avif isn't part of the site's naming convention
+  // and isn't as universally droppable into other tools (Notion included),
+  // so it always gets normalized to .jpg on the way out.
+  const outputFilename = ext === ".avif" ? filename.slice(0, -ext.length) + ".jpg" : filename;
+  const outputPath = path.join(OUTPUT_DIR, outputFilename);
   const maxWidth = getMaxWidth(filename);
 
   const beforeSize = fs.statSync(inputPath).size;
@@ -71,9 +77,10 @@ async function optimizeOne(filename) {
   let pipeline = sharp(inputPath).rotate(); // auto-orient from EXIF, then strip it
   pipeline = pipeline.resize({ width: maxWidth, withoutEnlargement: true });
 
-  if (ext === ".png") {
+  const outExt = path.extname(outputFilename).toLowerCase();
+  if (outExt === ".png") {
     pipeline = pipeline.png({ quality: PNG_QUALITY, compressionLevel: 9 });
-  } else if (ext === ".webp") {
+  } else if (outExt === ".webp") {
     pipeline = pipeline.webp({ quality: JPEG_QUALITY });
   } else {
     pipeline = pipeline.jpeg({ quality: JPEG_QUALITY, mozjpeg: true });
@@ -85,7 +92,7 @@ async function optimizeOne(filename) {
   const afterSize = fs.statSync(outputPath).size;
   const savedPct = Math.round((1 - afterSize / beforeSize) * 100);
   console.log(
-    `  ${filename}: ${(beforeSize / 1024).toFixed(0)}KB -> ${(afterSize / 1024).toFixed(0)}KB (${savedPct}% smaller, max width ${maxWidth}px)`
+    `  ${filename} -> ${outputFilename}: ${(beforeSize / 1024).toFixed(0)}KB -> ${(afterSize / 1024).toFixed(0)}KB (${savedPct}% smaller, max width ${maxWidth}px)`
   );
 }
 

@@ -1855,10 +1855,14 @@ p {
 
 .pcard-photo {
   position: relative;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   background: var(--bg-section);
   overflow: hidden;
   border-radius: 0;
+}
+
+.pcard-photo .smart-image {
+  object-fit: contain;
 }
 
 .pcard-photo-default,
@@ -2120,7 +2124,7 @@ p {
 .pdp-thumb {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
   background: var(--bg-section);
   border: 1px solid var(--border);
   display: flex;
@@ -2134,6 +2138,11 @@ p {
   font-family: var(--font-sans);
 }
 
+.pdp-main-photo .smart-image,
+.pdp-thumb .smart-image {
+  object-fit: contain;
+}
+
 .pdp-thumb.active {
   border-color: var(--dark);
   border-width: 2px;
@@ -2142,7 +2151,7 @@ p {
 .pdp-main-photo {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
   background: var(--bg-section);
   display: flex;
   align-items: center;
