@@ -41,31 +41,6 @@ export default function HomeClient({ products }: { products: Product[] }) {
         </div>
       </section>
 
-      {/* ---------- INTRO STRIP ---------- */}
-      <section className="hero">
-        <div className="hero-inner" style={{ gridTemplateColumns: "1fr" }}>
-          <div className="hero-copy" style={{ textAlign: "center", margin: "0 auto" }}>
-            <span className="eyebrow">
-              <Copy path="home.heroEyebrow" fallback={home.heroEyebrow} />
-            </span>
-            <h1>
-              <Copy path="home.heroTitle" fallback={home.heroTitle} />
-            </h1>
-            <p style={{ margin: "20px auto 32px" }}>
-              <Copy path="home.heroSubtitle" fallback={home.heroSubtitle} />
-            </p>
-            <div className="hero-ctas" style={{ justifyContent: "center" }}>
-              <Link href={home.heroCtaPrimary.href} className="btn btn--primary">
-                <Copy path="home.heroCtaPrimary.label" fallback={home.heroCtaPrimary.label} />
-              </Link>
-              <Link href={home.heroCtaSecondary.href} className="btn btn--outline">
-                <Copy path="home.heroCtaSecondary.label" fallback={home.heroCtaSecondary.label} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ---------- ABOUT STRIP ---------- */}
       <section className="section section--alt reveal">
         <div className="wrap">
@@ -205,22 +180,6 @@ export default function HomeClient({ products }: { products: Product[] }) {
         image={home.stickyHeroes[1].image}
         pinAmount={30}
       />
-
-      {/* ---------- CTA BAND ---------- */}
-      <section className="section section--dark reveal">
-        <div className="wrap cta-band">
-          <span className="eyebrow">Ready When You Are</span>
-          <h2>
-            <Copy path="home.ctaTitle" fallback={home.ctaTitle} />
-          </h2>
-          <p>
-            <Copy path="home.ctaText" fallback={home.ctaText} />
-          </p>
-          <Link href={home.ctaButton.href} className="btn btn--primary">
-            <Copy path="home.ctaButton.label" fallback={home.ctaButton.label} />
-          </Link>
-        </div>
-      </section>
     </>
   );
 }

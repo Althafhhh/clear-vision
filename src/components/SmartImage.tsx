@@ -7,6 +7,7 @@ export default function SmartImage({
   alt,
   fallbackLabel,
   eager = false,
+  contain = false,
   adaptiveBg = false,
 }: {
   src: string;
@@ -15,12 +16,15 @@ export default function SmartImage({
   /** Set true only for above-the-fold images (e.g. the first sticky hero)
    *  so the browser fetches it immediately instead of deferring it. */
   eager?: boolean;
+  /** Show the whole photo, never cropped/zoomed (object-fit: contain)
+   *  instead of the default fill-and-crop behavior. Use for product
+   *  photos, which are studio shots with their own built-in framing. */
+  contain?: boolean;
   /**
-   * For product photos, which are never cropped (object-fit: contain).
-   * When the photo's own aspect ratio doesn't match its box, this fills
-   * the gap with a blurred, zoomed-in copy of the SAME photo instead of a
-   * flat fallback color — so the backdrop always matches the image,
-   * whatever its background happens to be.
+   * Only meaningful alongside `contain`. Instead of a flat background
+   * color filling the gaps left by an image whose aspect ratio doesn't
+   * match its box, this fills the gap with a blurred, zoomed-in copy of
+   * the SAME photo — so the backdrop matches the image itself.
    */
   adaptiveBg?: boolean;
 }) {
@@ -51,7 +55,7 @@ export default function SmartImage({
       <img
         src={src}
         alt={alt}
-        className={adaptiveBg ? "smart-image smart-image--contain" : "smart-image"}
+        className={contain ? "smart-image smart-image--contain" : "smart-image"}
         onError={() => setError(true)}
         loading={eager ? "eager" : "lazy"}
         decoding="async"

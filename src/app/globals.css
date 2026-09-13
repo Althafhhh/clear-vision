@@ -341,19 +341,11 @@ p {
 }
 
 /* ---------- Navbar ---------- */
-
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  border-bottom: 1px solid var(--border);
-}
-
-.navbar-inner {
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-}
+/* .navbar, .navbar-inner, and .nav-links are defined once, together,
+   further down this file (search "Mega menus" section) — keeping every
+   navbar layout rule in one place avoids the exact bug this codebase hit
+   twice: a duplicate rule elsewhere in the file silently winning the
+   cascade and undoing a responsive override. */
 
 .logo {
   display: flex;
@@ -384,12 +376,6 @@ p {
   justify-content: center;
 }
 
-.nav-links {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-}
-
 .nav-links a {
   font-size: 16px;
   font-weight: 700;
@@ -399,18 +385,6 @@ p {
 
 .nav-links a:hover {
   color: var(--text-secondary);
-}
-
-.nav-cta {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.nav-phone {
-  font-size: 13px;
-  color: var(--text-secondary);
-  display: none;
 }
 
 .hamburger {
@@ -732,58 +706,21 @@ p {
   }
 }
 
-.pcard-grid--full {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-}
-
 /* Edge-to-edge, no gaps, no side padding — cards touch the browser edges
    and each other, separated only by a hairline border for definition. */
 /* Horizontal scroll row: 6 cards visible, no gaps, no dividers between
    them, and the scrollbar itself is hidden (still scrollable by touch,
    trackpad, or drag) so it reads as a clean, quiet strip. */
-.pcard-grid--flush {
+.pcard-grid.pcard-grid--flush {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 0;
+  margin-top: 0;
 }
 
 @media (max-width: 700px) {
-  .pcard-grid--flush {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 460px) {
-  .pcard-grid--flush {
+  .pcard-grid.pcard-grid--flush {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* ---------- Horizontal scroll row (homepage featured frames) ---------- */
-
-.pcard-scroll-row {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 8px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.pcard-scroll-item {
-  flex: 0 0 calc((100% - 5 * 20px) / 6);
-  scroll-snap-align: start;
-}
-
-@media (max-width: 1100px) {
-  .pcard-scroll-item {
-    flex-basis: calc((100% - 3 * 20px) / 4);
-  }
-}
-
-@media (max-width: 700px) {
-  .pcard-scroll-item {
-    flex-basis: calc((100% - 20px) / 2);
   }
 }
 
@@ -810,24 +747,26 @@ p {
   padding: 8px;
 }
 
-.pcard-grid--catalog {
+.pcard-grid.pcard-grid--catalog {
   grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  margin-top: 36px;
 }
 
 @media (min-width: 600px) {
-  .pcard-grid--catalog {
+  .pcard-grid.pcard-grid--catalog {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (min-width: 900px) {
-  .pcard-grid--catalog {
+  .pcard-grid.pcard-grid--catalog {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (min-width: 1300px) {
-  .pcard-grid--catalog {
+  .pcard-grid.pcard-grid--catalog {
     grid-template-columns: repeat(6, 1fr);
   }
 }
@@ -1213,19 +1152,13 @@ p {
 
 /* ---------- Responsive ---------- */
 
-@media (min-width: 900px) {
-  .nav-phone {
-    display: block;
-  }
-}
-
 @media (max-width: 900px) {
   .navbar-inner {
     padding: 16px 20px;
   }
 
   .nav-links {
-    display: none;
+    display: none !important;
   }
 
   .hamburger {
@@ -1307,6 +1240,23 @@ p {
   background: var(--bg-section);
   color: var(--text-muted);
   font-size: 12px;
+}
+
+/* Product photos specifically: plain #f2f2f2 box, no visible fallback
+   text — a blank frame reads cleaner than a floating placeholder title
+   when a product has no photo uploaded yet. */
+.pcard-photo .smart-image-fallback,
+.pdp-main-photo .smart-image-fallback,
+.pdp-thumb .smart-image-fallback,
+.pdp-mobile-slide .smart-image-fallback {
+  background: #f2f2f2;
+}
+
+.pcard-photo .smart-image-fallback span,
+.pdp-main-photo .smart-image-fallback span,
+.pdp-thumb .smart-image-fallback span,
+.pdp-mobile-slide .smart-image-fallback span {
+  display: none;
 }
 
 /* ============================================
@@ -1716,9 +1666,17 @@ p {
   justify-content: center;
 }
 
+.nav-search-icon-mobile {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .nav-search-trigger {
     display: none;
+  }
+
+  .nav-search-icon-mobile {
+    display: flex;
   }
 }
 
@@ -1869,7 +1827,8 @@ p {
 
 .pcard-photo {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
+  background: #f2f2f2;
   overflow: hidden;
   border-radius: 0;
 }
@@ -1889,12 +1848,12 @@ p {
 
 .pcard-photo-default {
   opacity: 1;
-  background: var(--bg-section);
+  background: #f2f2f2;
 }
 
 .pcard-photo-hover {
   opacity: 0;
-  background: var(--accent-light);
+  background: #f2f2f2;
 }
 
 .pcard:hover .pcard-photo-default {
@@ -1929,6 +1888,7 @@ p {
   color: #fff;
   border: none;
   border-radius: 6px;
+  opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
 }
@@ -1938,6 +1898,12 @@ p {
   transform: translateY(0);
 }
 
+@media (max-width: 900px) {
+  .pcard-add {
+    display: none;
+  }
+}
+
 .pcard-add:hover {
   background: #2A1D14;
 }
@@ -1945,12 +1911,6 @@ p {
 @media (max-width: 900px) {
   .pcard-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Always show the add-to-cart button on touch devices — no hover state */
-  .pcard-add {
-    opacity: 1;
-    transform: none;
   }
 }
 
@@ -2135,6 +2095,7 @@ p {
   position: relative;
   overflow: hidden;
   aspect-ratio: 4 / 3;
+  background: #f2f2f2;
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -2157,6 +2118,7 @@ p {
   position: relative;
   overflow: hidden;
   aspect-ratio: 4 / 3;
+  background: #f2f2f2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2246,8 +2208,208 @@ p {
   padding-bottom: 16px;
 }
 
+/* ============================================
+   MOBILE PRODUCT PAGE
+   Swipeable photo carousel + a vertical capsule
+   indicator, plus a pull-up sheet that expands
+   into a full-screen overlay above everything
+   (images and navbar included) for the rest of
+   the product info. Desktop is unaffected — see
+   the media query at the bottom of this section.
+   ============================================ */
+
+.pdp-mobile-carousel-wrap {
+  display: none;
+  position: relative;
+}
+
+.pdp-mobile-carousel {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdp-mobile-slide {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #f2f2f2;
+}
+
+/* Vertical capsule position indicator — a little way in from the left
+   edge, vertically centered, one capsule per photo, active one longer. */
+.pdp-capsule-track {
+  position: fixed;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 90;
+}
+
+.pdp-capsule {
+  width: 5px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.55);
+  border: none;
+  padding: 0;
+  transition: height 0.2s ease, background 0.2s ease;
+}
+
+.pdp-capsule.active {
+  height: 22px;
+  background: #ffffff;
+}
+
+/* ---------- Pull-up sheet ---------- */
+
+.pdp-mobile-sheet {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 24px rgba(20, 12, 6, 0.14);
+  transition: transform 0.3s ease, height 0.3s ease;
+  z-index: 300; /* above the fixed site header (100) and its mega menus */
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Collapsed: just tall enough for the handle + peek row + CTA. */
+.pdp-mobile-sheet:not(.expanded) {
+  height: auto;
+}
+
+/* Expanded: a full-screen take-over, covers the carousel and the navbar. */
+.pdp-mobile-sheet.expanded {
+  top: 0;
+  height: 100vh;
+}
+
+.pdp-sheet-handle {
+  padding: 10px 20px 4px;
+  cursor: grab;
+  touch-action: none;
+  flex-shrink: 0;
+}
+
+.pdp-sheet-drag-bar {
+  display: block;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin: 0 auto;
+}
+
+.pdp-sheet-peek {
+  padding: 8px 20px 20px;
+}
+
+.pdp-sheet-peek-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.pdp-sheet-title {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdp-sheet-mini-swatches {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pdp-mini-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-section);
+}
+
+.pdp-sheet-cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0;
+}
+
+.pdp-sheet-content {
+  overflow-y: auto;
+  padding: 4px 20px 40px;
+  flex: 1;
+}
+
+.pdp-sheet-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pdp-sheet-heart {
+  position: static;
+  background: none;
+}
+
 @media (max-width: 900px) {
   .pdp-layout {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 700px) {
+  /* Desktop gallery and sidebar give way to the mobile carousel + sheet */
+  .pdp-gallery,
+  .pdp-info,
+  .pdp-similar--desktop {
+    display: none;
+  }
+
+  .pdp-mobile-carousel-wrap {
+    display: block;
+  }
+
+  .pdp-mobile-sheet {
+    display: flex;
+  }
+
+  /* Full-bleed photos: pull the carousel out from the page's side
+     padding so it truly spans the viewport width. */
+  .pdp-section {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 140px; /* room for the collapsed sheet peeking up */
+  }
+
+  .pdp-wrap {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .pdp-breadcrumb {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .pdp-layout {
+    gap: 0;
+  }
+}
+

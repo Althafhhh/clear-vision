@@ -50,6 +50,16 @@ export default function Navbar() {
     <>
       <header className={`navbar ${scrolled ? "navbar--solid" : "navbar--transparent"}`}>
         <div className="navbar-inner">
+          <button
+            className="hamburger hamburger--mobile-lead"
+            aria-label="Open menu"
+            onClick={() => setMobileOpen(true)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
           <Link href="/" className="logo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo/clear-vision-logo.png" alt="Clear Vision" className="logo-image" />
@@ -153,13 +163,25 @@ export default function Navbar() {
           </nav>
 
           <div className="nav-cta">
-            {/* Search — text + blinking cursor, click to reveal an input */}
+            {/* Desktop: text + blinking cursor trigger */}
             <button
               className="nav-search-trigger"
               onClick={() => setSearchOpen((s) => !s)}
               aria-label="Open search"
             >
               Search<span className="blink-cursor" />
+            </button>
+
+            {/* Mobile: icon-only search trigger */}
+            <button
+              className="icon-btn nav-search-icon-mobile"
+              onClick={() => setSearchOpen((s) => !s)}
+              aria-label="Open search"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
             </button>
 
             <div className="nav-icon-group">
@@ -198,16 +220,6 @@ export default function Navbar() {
                 {cartCount > 0 && <span className="icon-badge">{cartCount}</span>}
               </button>
             </div>
-
-            <button
-              className="hamburger"
-              aria-label="Open menu"
-              onClick={() => setMobileOpen(true)}
-            >
-              <span />
-              <span />
-              <span />
-            </button>
           </div>
         </div>
 

@@ -42,6 +42,19 @@ function text(prop?: { rich_text?: NotionRichText; title?: NotionRichText }): st
   return prop?.rich_text?.[0]?.plain_text ?? prop?.title?.[0]?.plain_text ?? "";
 }
 
+// Turns arbitrary text (a model code with spaces, punctuation, mixed case —
+// whatever someone actually types into "Product ID") into a safe URL
+// segment. This is what makes the route reliable regardless of what's
+// typed in Notion, instead of requiring it to already be lowercase and
+// hyphenated.
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 // Numeric-aware sort so "pr1-2.jpg" sorts before "pr1-10.jpg" (a plain
 // alphabetical sort would put "pr1-10" before "pr1-2"). This is what makes
 // the filename naming system (pr1-1, pr1-2, pr1-3...) reliably control
@@ -91,7 +104,7 @@ export async function getNotionProducts(): Promise<NotionProduct[] | null> {
         .filter((url): url is string => Boolean(url));
 
       return {
-        id: text(p["Product ID"]) || page.id,
+        id: slugify(text(p["Product ID"])) || page.id,
         name: text(p["Name"]) || "Untitled",
         category: p["Category"]?.select?.name ?? "",
         brand: p["Brand"]?.select?.name,

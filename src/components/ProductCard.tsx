@@ -58,10 +58,10 @@ export default function ProductCard({
       <Link href={`/shop/${product.id}`}>
         <div className="pcard-photo">
           <div className="pcard-photo-default">
-            <SmartImage src={defaultPhoto} alt={product.name} fallbackLabel={product.name} adaptiveBg />
+            <SmartImage src={defaultPhoto} alt={product.name} fallbackLabel={product.name} contain />
           </div>
           <div className="pcard-photo-hover">
-            <SmartImage src={hoverPhoto} alt={`${product.name} detail`} fallbackLabel="Detail view" adaptiveBg />
+            <SmartImage src={hoverPhoto} alt={`${product.name} detail`} fallbackLabel="Detail view" contain />
           </div>
         </div>
 
